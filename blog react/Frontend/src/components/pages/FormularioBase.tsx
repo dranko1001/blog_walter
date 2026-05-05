@@ -7,6 +7,12 @@ const FormularioBase = () => {
 
   async function enviar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (import.meta.env.PROD && !import.meta.env.VITE_API_BASE) {
+      alert(
+        "Configura VITE_API_BASE en Vercel con la URL de tu backend y vuelve a desplegar."
+      );
+      return;
+    }
     const fd = new FormData(e.currentTarget);
     const body = {
       titulo: String(fd.get("titulo") ?? "").trim(),

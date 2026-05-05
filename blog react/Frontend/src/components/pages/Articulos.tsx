@@ -20,6 +20,14 @@ const Articulos = () => {
 
   async function consumirApi() {
     setError(null);
+    if (import.meta.env.PROD && !import.meta.env.VITE_API_BASE) {
+      setError(
+        "Falta VITE_API_BASE en Vercel: añade la URL pública de tu API (backend Express). " +
+          "Vercel solo sirve el React; no hay servidor en el puerto 3000 ni acceso directo a la base desde el navegador. " +
+          "Cloudflare no es la base de datos (tu MySQL está en Clever Cloud y la usa solo el backend)."
+      );
+      return;
+    }
     try {
       const peticion = await fetch(apiUrl("/api/articulos/listarTodos"), { method: "GET" });
       const datos = await peticion.json();
@@ -31,7 +39,9 @@ const Articulos = () => {
         setArticulos(datos.results);
       }
     } catch {
-      setError("No se pudo conectar con el servidor. ¿Está el backend en el puerto 3000?");
+      setError(
+        "No se pudo conectar con la API. Comprueba que el backend esté desplegado, que VITE_API_BASE en Vercel sea correcta y vuelve a desplegar tras cambiar variables."
+      );
     }
   }
 
